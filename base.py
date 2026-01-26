@@ -1135,4 +1135,156 @@ class CalculatorTool(ToolPlugin):
                         "default": 6
                     },
                     "format": {
-                        "type":
+                        "type": "string",
+                        "description": "Result format",
+                        "enum": ["number", "scientific", "fraction"],
+                        "default": "number"
+                    }
+                },
+                "required": ["expression"]
+            },
+            category=ToolCategory.UTILITY.value,
+            capabilities=[ToolCapability.FAST.value],
+            version=self.VERSION
+        )
+    
+    async def execute(
+        self,
+        context: ToolExecutionContext,
+        expression: str,
+        precision: int = 6,
+        format: str = "number",
+        **kwargs
+    ) -> ToolResult:
+        """Execute calculation with safe eval"""
+        try:
+            # Sanitize expression
+            sanitized = self._sanitize_expression(expression)
+            
+            # Evaluate safely
+            result = self._safe_eval(sanitized)
+            
+            if result is None:
+                return ToolResult(
+                    status=ToolResultStatus.FAILURE,
+                    error="Invalid expression or mathematical error"
+                )
+            
+            # Format result
+            formatted_result = self._format_result(result, precision, format)
+            
+            return ToolResult(
+                status=ToolResultStatus.SUCCESS,
+                output=formatted_result,
+                metadata={
+                    "expression": expression,
+                    "result": float(result) if isinstance(result, (int, float)) else str(result),
+                    "precision": precision,
+                    "format": format
+                }
+            )
+        
+        except Exception as e:
+            return ToolResult(
+                status=ToolResultStatus.FAILURE,
+                error=f"Calculation error: {str(e)}"
+            )
+    
+    def _sanitize_expression(self, expression: str) -> str:
+        """Sanitize mathematical expression"""
+        # Remove whitespace
+        expr = expression.strip()
+        
+        # Replace common math symbols
+        expr = expr.replace('^', '**')  # Power
+        expr = expr.replace('÷', '/')   # Division
+        expr = expr.replace('×', '*')   # Multiplication
+        
+        # Validate allowed characters
+        allowed_chars = set("0123456789+-*/()., eEπ ")
+        allowed_chars.update(set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"))
+        
+        for char in expr:
+            if char not in allowed_chars:
+                raise ValueError(f"Invalid character in expression: {char}")
+        
+        return expr
+    
+    def _safe_eval(self, expression: str):
+        """Safe evaluation of mathematical expression"""
+        try:
+            # Create safe environment
+            safe_dict = self.SAFE_FUNCTIONS.copy()
+            
+            # Add basic operations
+            safe_dict.update({
+                '__builtins__': {},
+                'True': True,
+                'False': False,
+                'None': None
+            })
+            
+            # Evaluate
+            result = eval(expression, safe_dict)
+            
+            # Ensure result is a number
+            if not isinstance(result, (int, float, complex)):
+                raise ValueError("Result is not a number")
+            
+            return result
+        
+        except Exception as e:
+            logger.error(f"Safe eval failed for '{expression}': {e}")
+            return None
+    
+    def _format_result(self, result, precision: int, format: str):
+        """Format the result based on requested format"""
+        if isinstance(result, complex):
+            # Handle complex numbers
+            real = round(result.real, precision)
+            imag = round(result.imag, precision)
+            return f"{real}{' + ' if imag >= 0 else ' - '}{abs(imag)}i"
+        
+        if format == "scientific":
+            return f"{result:.{precision}e}"
+        elif format == "fraction":
+            # Try to represent as fraction
+            from fractions import Fraction
+            try:
+                frac = Fraction(result).limit_denominator(1000)
+                return f"{frac.numerator}/{frac.denominator}"
+            except:
+                return f"{result:.{precision}f}"
+        else:
+            return f"{result:.{precision}f}"
+    
+    async def _validate_business_logic(
+        self,
+        arguments: Dict[str, Any],
+        context: Optional[ToolExecutionContext]
+    ) -> ToolValidationResult:
+        """Validate calculator inputs"""
+        errors = []
+        suggestions = []
+        
+        expression = arguments.get("expression", "")
+        
+        # Check expression complexity
+        if len(expression) > 100:
+            errors.append("Expression too long (max 100 characters)")
+        
+        # Check for potentially dangerous patterns
+        dangerous = ["import", "__", "eval", "exec", "compile", "open"]
+        for pattern in dangerous:
+            if pattern in expression.lower():
+                errors.append(f"Expression contains dangerous pattern: {pattern}")
+        
+        # Check for division by zero patterns
+        if "/0" in expression or "/ 0" in expression:
+            suggestions.append("Expression contains division by zero, may cause error")
+        
+        return ToolValidationResult(
+            valid=len(errors) == 0,
+            errors=errors,
+            suggestions=suggestions
+        )
