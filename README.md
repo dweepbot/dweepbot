@@ -22,9 +22,7 @@
 
 ## 🎥 Demo
 
-![DweepBot Pro Demo](path/to/your/demo.gif)  
-*(Pro tip: Record a quick screen capture of DweepBot handling a task like "Analyze this CSV and generate a report" – use tools like Kap on macOS for GIFs.)*
-
+![DweepBot Pro Demo]
 🦈 DweepBot Pro working through a multi-step task: PLAN → ACT → OBSERVE → REFLECT. Writing code, running tools, fixing errors, and shipping.
 
 ## 💡 What Is DweepBot Pro?
