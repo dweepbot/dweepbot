@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  dweepbot:
+    build: .
+    container_name: dweepbot
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - ./chroma_db:/app/chroma_db
+      - ./outputs:/app/outputs
+    stdin_open: true
+    tty: true
+    command: python -m cli
+    
+  # Optional: ChromaDB service (if using external ChromaDB)
+  # chromadb:
+  #   image: chromadb/chroma:latest
+  #   container_name: dweepbot-chromadb
+  #   ports:
+  #     - "8000:8000"
+  #   volumes:
+  #     - ./chroma_data:/chroma/chroma
+  #   environment:
+  #     - IS_PERSISTENT=TRUE
