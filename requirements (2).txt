@@ -1,0 +1,15 @@
+# Core Dependencies
+anthropic>=0.18.0
+openai>=1.0.0
+rich>=13.0.0
+python-dotenv>=1.0.0
+requests>=2.31.0
+pydantic>=2.0.0
+
+# Optional: Install with pip install -e ".[feature]"
+# For web search: pip install -e ".[web]"
+# For document processing: pip install -e ".[docs]"
+# For RAG capabilities: pip install -e ".[rag]"
+# For notifications: pip install -e ".[notifications]"
+# For all features: pip install -e ".[all]"
+# For development: pip install -e ".[dev]"
