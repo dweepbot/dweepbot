@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=65.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dweepbot"
+version = "1.0.0"
+description = "AI agent - macOS compatible"
+requires-python = ">=3.10"
+
+dependencies = [
+    "requests>=2.31.0",
+    "pyyaml>=6.0.0",
+    "rich>=13.7.0",
+    "typer>=0.9.0",
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+full = [
+    "duckduckgo-search>=4.1.0",
+    "PyPDF2>=3.0.0",
+    "python-docx>=1.0.0",
+]
+
+[project.scripts]
+dweepbot = "dweepbot.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
