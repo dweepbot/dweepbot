@@ -1,256 +1,416 @@
-<p align="center">
-  <img src="path/to/your/animated-shark-logo.gif" alt="DweepBot Pro Logo" width="200">
-</p>
+# 🦈 DweepBot Pro
 
-<h1 align="center">🦈 DweepBot Pro – Autonomous AI Agent Framework</h1>
+**Production-grade autonomous AI agent framework**  
+*Clawdbot autonomy at DeepSeek prices*
 
-<p align="center">
-  <a href="https://github.com/dweepbot/dweepbot/stargazers"><img src="https://img.shields.io/github/stars/dweepbot/dweepbot?style=social" alt="GitHub Stars"></a>
-  <a href="https://github.com/dweepbot/dweepbot/network/members"><img src="https://img.shields.io/github/forks/dweepbot/dweepbot?style=social" alt="GitHub Forks"></a>
-  <a href="https://github.com/dweepbot/dweepbot/actions"><img src="https://img.shields.io/github/actions/workflow/status/dweepbot/dweepbot/tests.yml?branch=main" alt="Build Status"></a>
-  <a href="https://github.com/dweepbot/dweepbot/blob/main/LICENSE"><img src="https://img.shields.io/github/license/dweepbot/dweepbot" alt="MIT License"></a>
-  <a href="https://pypi.org/project/dweepbot/"><img src="https://img.shields.io/pypi/v/dweepbot" alt="PyPI Version"></a>
-</p>
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
-<p align="center">
-  DweepBot Pro is a production-grade, open-source AI agent framework that gives you Claude/GPT‑4–level autonomy at DeepSeek prices. Batteries included. Extensible. Fun to hack on.
-</p>
+---
 
-<p align="center">
-  👉 Like this project? <a href="https://github.com/dweepbot/dweepbot">Star the repo</a> to support development!
-</p>
+## 🎯 What is DweepBot?
 
-## 🎥 Demo
+DweepBot is an open-source autonomous agent framework built for **real production workloads**. It delivers the same PLAN → ACT → OBSERVE → REFLECT autonomy as expensive alternatives like Clawdbot, but at **50-60× lower cost** by using DeepSeek-V3.
 
-![DweepBot Pro Demo](path/to/your/demo.gif)  
-*(Pro tip: Record a quick screen capture of DweepBot handling a task like "Analyze this CSV and generate a report" – use tools like Kap on macOS for GIFs.)*
+### Key Features
 
-🦈 DweepBot Pro working through a multi-step task: PLAN → ACT → OBSERVE → REFLECT. Writing code, running tools, fixing errors, and shipping.
+✨ **Full Autonomy**: Real PLAN → ACT → OBSERVE → REFLECT loop, not a chatbot wrapper  
+💰 **Cost-Effective**: $0.27/1M input tokens vs GPT-4's $15/1M (55× cheaper)  
+🛠️ **Batteries Included**: 8+ production-ready tools out of the box  
+🧠 **Memory System**: Working memory + optional RAG for complex tasks  
+🔒 **Production-Ready**: Error boundaries, cost tracking, state persistence  
+🎨 **Developer-Friendly**: Clean APIs, full type hints, async/await  
 
-## 💡 What Is DweepBot Pro?
+---
 
-DweepBot Pro is an autonomous AI agent framework built for real workloads, not toy demos.  
-It combines:
+## 📦 Installation
 
-- 🧭 A PLAN → ACT → OBSERVE → REFLECT loop for autonomous planning
-- 💰 DeepSeek‑V3 for 50–60× lower LLM costs than GPT‑4/Claude agents
-- 🧩 Batteries-included tools (web search, secure code exec, file ops, notifications)
-- 🧠 Multi-level memory + RAG so it doesn’t forget what it just did
-- 🎨 A simple, hackable architecture that fits in your head
+### Quick Start (Core Features)
 
-Target users: agencies, indie hackers, and dev teams that want serious agents without serious cloud bills.
-
-## ⚡ Quick Start
-
-### 1. Requirements
-- Python 3.10+
-- macOS 10.15+, Linux, or WSL (Windows via WSL recommended)
-- DeepSeek API key (free tier available)
-- Optional deps: For full features, install `rich` (TUI), `duckduckgo-search` (web), `PyPDF2` & `python-docx` (docs), `chromadb` (RAG)
-
-### 2. Install
 ```bash
-# Clone the repo
+pip install dweepbot
+```
+
+### With All Features
+
+```bash
+# Web search + RAG + document processing
+pip install "dweepbot[all]"
+
+# Or install specific feature sets
+pip install "dweepbot[web]"     # Web search
+pip install "dweepbot[rag]"     # Vector store
+pip install "dweepbot[docs]"    # PDF/Word support
+```
+
+### From Source
+
+```bash
 git clone https://github.com/dweepbot/dweepbot.git
 cd dweepbot
-
-# Install with all features (RAG, web, docs)
 pip install -e ".[all]"
+```
 
-# Or minimal core
-pip install -e .
+---
 
-export DEEPSEEK_API_KEY="your_api_key_here"
+## 🚀 Quick Start
 
-# Interactive TUI
-dweepbot
+### 1. Get Your API Key
 
-# Or run a single autonomous task
-dweepbot --task "Create a Python script to analyze CSV files"
+Get a free DeepSeek API key from [platform.deepseek.com](https://platform.deepseek.com/api_keys)
 
+### 2. Configure
 
+```bash
+# Run the setup wizard
+dweepbot setup
+
+# Or manually set environment variable
+export DEEPSEEK_API_KEY='your-api-key-here'
+```
+
+### 3. Run Your First Task
+
+```bash
+# CLI mode
+dweepbot run "Create a Python script that calculates the first 20 prime numbers and save it to primes.py"
+
+# Interactive mode
+dweepbot chat
+```
+
+---
+
+## 💻 Usage
+
+### Command Line Interface
+
+```bash
+# Execute a task
+dweepbot run "Your task here"
+
+# With options
+dweepbot run "Research and compare Python vs Rust" \
+  --max-cost 2.0 \
+  --max-iter 100 \
+  --web \
+  --verbose
+
+# Show available tools and system info
+dweepbot info
+
+# Check version
+dweepbot version
+```
+
+### Python API
+
+```python
 import asyncio
-from pathlib import Path
-
-from dweepbot.core.agent import AutonomousAgent
-from dweepbot.core.types import Context
-from dweepbot.llm.client import DeepSeekClient
-from dweepbot.tools.base import ToolRegistry
-from dweepbot.memory.manager import MemoryManager
+from dweepbot import (
+    AgentConfig,
+    AutonomousAgent,
+    DeepSeekClient,
+    create_registry_with_default_tools,
+    ToolExecutionContext
+)
 
 async def main():
-    workspace = Path("./my_workspace")
-    api_key = "your_api_key"
-    llm = DeepSeekClient(api_key)
-    tools = ToolRegistry()
-    memory = MemoryManager(workspace)
-
-    # Register core tools
-    from dweepbot.tools.core import ReadFileTool, WriteFileTool
-    tools.register(ReadFileTool(workspace))
-    tools.register(WriteFileTool(workspace))
-
-    context = Context(
-        task_id="example",
-        workspace_path=str(workspace),
+    # Configuration
+    config = AgentConfig(
+        deepseek_api_key="your-key",
+        max_cost_usd=5.0,
+        max_iterations=50,
+        enable_code_execution=True
     )
-
-    agent = AutonomousAgent(llm, tools, memory, context)
-    async for update in agent.run("Create a README.md file"):
-        if update["type"] == "text":
-            print(update["content"], end="")
-        elif update["type"] == "complete":
-            print(f"\n\nDone! Cost: ${update['content']['total_cost']:.4f}")
+    
+    # Initialize components
+    async with DeepSeekClient(api_key=config.deepseek_api_key) as llm:
+        context = ToolExecutionContext(
+            workspace_path="./workspace"
+        )
+        tools = create_registry_with_default_tools(context)
+        
+        # Create and run agent
+        agent = AutonomousAgent(config, llm, tools)
+        
+        async for update in agent.run("Your task here"):
+            print(f"{update.type}: {update.message}")
 
 asyncio.run(main())
-🧠 Key Features
+```
 
-🧭 Autonomous Planning
-PLAN → ACT → OBSERVE → REFLECT loop for multi-step tasks, with dynamic subgoal creation and recovery when tools fail.
-💰 DeepSeek‑V3 Powered (50–60× Cheaper)
-Designed around DeepSeek‑V3 to deliver Claude/GPT‑4–class reasoning at a tiny fraction of the cost, with prompt caching and smart model selection.
-🧩 Batteries-Included Tools
-Comes with web search, secure sandboxed code execution, file operations, notifications, and more — plus a clean plugin system.
-🧠 Multi-Level Memory + RAG
-Working memory for the current task, session memory for recent history, and long-term memory with RAG over your code and docs.
-🛠️ Plugin-Friendly Architecture
-Drop in new tools as plugins with Pydantic validation, sandboxing, and optional rollback for stateful operations.
-🎨 Developer-First DX
-Rich TUI, streaming updates, structured logs, type hints everywhere, and a clean Python API.
+---
 
-🔬 How It Compares
-🦈 vs Other Agent Frameworks
+## 🛠️ Available Tools
 
+| Tool | Description | Category |
+|------|-------------|----------|
+| `read_file` | Read file contents | File I/O |
+| `write_file` | Create or modify files | File I/O |
+| `list_directory` | List directory contents | File I/O |
+| `delete_file` | Delete files (dangerous) | File I/O |
+| `python_execute` | Run Python code in sandbox | Code Execution |
+| `python_repl` | Interactive Python session | Code Execution |
+| `http_get` | Make HTTP GET requests | Web |
+| `http_post` | Make HTTP POST requests | Web |
+| `web_search` | DuckDuckGo search (requires `[web]`) | Web |
 
+### Creating Custom Tools
 
+```python
+from dweepbot.tools.base import BaseTool, ToolMetadata, ToolResult, ToolCategory
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-FeatureAutoGPTLangChainOpen InterpreterClawdbot (Claude)🦈 DweepBot ProAutonomy loopBasic, brittleDIY graphsMostly REPL/code execProprietaryPLAN–ACT–OBSERVE–REFLECTMemoryAd hoc / vectorPluggableSession-onlyContext window onlyMulti-level + RAGCost (LLM)GPT‑4/GPT‑4.1GPT‑4/Claude/etc.GPT-4/Claude/etc.Claude stackDeepSeek‑V3 (50–60× cheaper)Built-in toolsLimitedBYO toolsCode + FSProprietary toolsetWeb, code exec, FS, notifyExtensibilityMediumHigh, complexLow–mediumLimited, closedHigh, simple plugin systemHostingSelf-host onlySelf-host / SaaSLocalSaaS onlySelf-host, OSS, future SaaSComplexityHighHighLow–mediumHidden internalsOpinionated, understandable
-TL;DR: Simpler than LangChain, more powerful than Open Interpreter, more reliable than AutoGPT, cheaper and more open than Clawdbot-style agents.
-🚀 Roadmap
-
- Add browser automation tool (e.g., Playwright integration)
- Multi-agent support for complex workflows
- Web UI dashboard for monitoring runs
- More plugins: GitHub integration, email handling
- Core autonomy loop stable
-
-Suggestions? Open an issue!
-🧩 Plugin System (Custom Tools)
-Create custom tools in a few lines:
-from dweepbot.tools.base import ToolPlugin, ToolMetadata, ToolResult, ToolResultStatus
-
-class MyCustomTool(ToolPlugin):
+class MyCustomTool(BaseTool):
     @property
     def metadata(self) -> ToolMetadata:
         return ToolMetadata(
             name="my_tool",
-            description="What this tool does",
-            parameters={
-                "type": "object",
-                "properties": {
-                    "arg1": {
-                        "type": "string",
-                        "description": "First argument",
-                    }
-                },
-                "required": ["arg1"],
-            },
-            category="custom",
+            description="Does something useful",
+            category=ToolCategory.SYSTEM,
+            parameters=[...],
+            returns="Result description"
+        )
+    
+    async def execute(self, **kwargs) -> ToolResult:
+        # Your implementation here
+        return ToolResult(
+            success=True,
+            output="Done!",
+            execution_time_seconds=0.1
         )
 
-    async def execute(self, arg1: str, **kwargs) -> ToolResult:
-        try:
-            result = do_something(arg1)
-            return ToolResult(
-                status=ToolResultStatus.SUCCESS,
-                output=result,
-            )
-        except Exception as e:
-            return ToolResult(
-                status=ToolResultStatus.FAILURE,
-                error=str(e),
-            )
+# Register with agent
+tools.register(MyCustomTool(context))
+```
 
-# Register your tool
-tools.register(MyCustomTool())
-🤝 Contributing
-We love contributions – from bug fixes to big features.
+---
 
-Fork the repo
-Create a feature branch: git checkout -b feature/my-awesome-thing
-Install dev deps: pip install -e ".[dev]"
-Run tests: pytest (and ideally pytest --cov=src/dweepbot)
-Format: black . and ruff check .
-Open a PR with a clear description and screenshots/logs where helpful
+## 📊 Cost Comparison
 
-Check out CONTRIBUTING.md for more details and ideas on where to start.
-💡 Good first issues: Labeled for beginners – add a new tool plugin (e.g., a simple SaaS integration) or improve the docs.
-📜 License
-DweepBot Pro is released under the MIT License.
-You’re free to use it in commercial projects, build SaaS products, and extend it as you like — just keep the copyright and license notice.
-See LICENSE for the full text.
+| Model | Input Cost | Output Cost | DweepBot Savings |
+|-------|-----------|-------------|------------------|
+| **DeepSeek-V3** | $0.27/1M | $1.10/1M | **Baseline** |
+| GPT-4 Turbo | $10/1M | $30/1M | **55× cheaper** |
+| Claude 3.5 Sonnet | $3/1M | $15/1M | **11× cheaper** |
+| Gemini 1.5 Pro | $1.25/1M | $5/1M | **4× cheaper** |
+
+**Real Example**: A complex research task (5 steps, 50K tokens):
+- GPT-4: ~$1.50
+- Claude: ~$0.75
+- **DweepBot**: ~$0.03 💰
+
+---
+
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────────────────────┐
+│                  Autonomous Agent                    │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐          │
+│  │   PLAN   │→ │   ACT    │→ │  OBSERVE │          │
+│  └──────────┘  └──────────┘  └──────────┘          │
+│       ↑                              │               │
+│       └──────────  REFLECT  ←────────┘               │
+└─────────────────────────────────────────────────────┘
+           │                    │
+    ┌──────▼──────┐      ┌─────▼──────┐
+    │  Tool       │      │   Memory    │
+    │  Registry   │      │   Manager   │
+    │             │      │             │
+    │ - File I/O  │      │ - Working   │
+    │ - Code Exec │      │ - Vector DB │
+    │ - Web       │      │ - RAG       │
+    └─────────────┘      └─────────────┘
+```
+
+### Core Components
+
+1. **Autonomous Agent**: State machine orchestrating the PLAN→ACT→OBSERVE→REFLECT loop
+2. **Tool Registry**: Plugin system for extensible capabilities
+3. **Memory Manager**: Short-term (working) and long-term (RAG) memory
+4. **DeepSeek Client**: Async LLM client with cost tracking
+5. **Configuration**: Type-safe settings with validation
+
+---
+
+## 🔧 Configuration
+
+All configuration via environment variables (prefix: `DWEEPBOT_`):
+
+```bash
+# Required
+DWEEPBOT_DEEPSEEK_API_KEY=your-key
+
+# Agent Limits
+DWEEPBOT_MAX_ITERATIONS=50
+DWEEPBOT_MAX_COST_USD=5.00
+DWEEPBOT_MAX_TIME_SECONDS=3600
+
+# Tool Control
+DWEEPBOT_ENABLE_WEB_SEARCH=false
+DWEEPBOT_ENABLE_CODE_EXECUTION=true
+DWEEPBOT_ENABLE_SHELL_EXECUTION=false
+
+# Code Execution
+DWEEPBOT_CODE_EXECUTION_TIMEOUT=30
+DWEEPBOT_CODE_EXECUTION_MEMORY_LIMIT_MB=512
+
+# Workspace
+DWEEPBOT_WORKSPACE_PATH=./workspace
+DWEEPBOT_MAX_FILE_SIZE_MB=10
+
+# Memory
+DWEEPBOT_MAX_WORKING_MEMORY=20
+DWEEPBOT_ENABLE_VECTOR_STORE=false
+```
+
+Or use `.env` file (auto-loaded):
+
+```bash
+dweepbot setup  # Creates .env with guided prompts
+```
+
+---
+
+## 📈 Example Tasks
+
+### Data Analysis
+
+```bash
+dweepbot run "Analyze this CSV file: sales_data.csv. Calculate total revenue, average transaction value, and create a summary report in markdown."
+```
+
+### Web Scraping
+
+```bash
+dweepbot run "Search for Python async best practices, fetch the top 3 articles, and create a summary document with key takeaways." --web
+```
+
+### Code Generation
+
+```bash
+dweepbot run "Create a FastAPI REST API with CRUD endpoints for a 'books' resource. Include data validation with Pydantic."
+```
+
+### Multi-Step Research
+
+```bash
+dweepbot run "Research the top 5 AI agent frameworks, compare their features, and create a comparison table saved as comparison.md" --web --max-cost 1.0
+```
+
+---
+
+## 🧪 Testing
+
+```bash
+# Install dev dependencies
+pip install -e ".[dev]"
+
+# Run tests
+pytest
+
+# With coverage
+pytest --cov=dweepbot --cov-report=html
+
+# Integration tests (requires API key)
+export DEEPSEEK_API_KEY=your-key
+pytest tests/integration/
+```
+
+---
+
+## 🛣️ Roadmap
+
+### Phase 1: Core ✅ (Current)
+- [x] PLAN→ACT→OBSERVE→REFLECT loop
+- [x] Tool system with 8+ tools
+- [x] Cost tracking & limits
+- [x] Working memory
+- [x] Production error handling
+
+### Phase 2: Enhanced Tools (Next 2 weeks)
+- [ ] Web browser automation (Playwright)
+- [ ] Document processing (PDF/DOCX)
+- [ ] Database tools (SQL, MongoDB)
+- [ ] API integration templates
+- [ ] Notification system (Discord/Slack)
+
+### Phase 3: Advanced Features (Month 2)
+- [ ] Vector store integration (ChromaDB)
+- [ ] Multi-agent orchestration
+- [ ] Task scheduling & cron
+- [ ] Web dashboard for monitoring
+- [ ] LangSmith integration
+
+### Phase 4: Enterprise (Month 3+)
+- [ ] Team collaboration features
+- [ ] Audit logs & compliance
+- [ ] Custom model support
+- [ ] On-premise deployment
+- [ ] SLA & support tiers
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+### Development Setup
+
+```bash
+# Clone repo
+git clone https://github.com/dweepbot/dweepbot.git
+cd dweepbot
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # or `venv\Scripts\activate` on Windows
+
+# Install in dev mode
+pip install -e ".[dev,all]"
+
+# Run tests
+pytest
+
+# Format code
+black src/ tests/
+ruff check src/ tests/
+```
+
+---
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- DeepSeek for providing cost-effective, high-quality LLMs
+- The open-source AI community for inspiration and tools
+- Early testers and contributors
+
+---
+
+## 📞 Support
+
+- **Documentation**: [docs.dweepbot.dev](https://docs.dweepbot.dev) (coming soon)
+- **Issues**: [GitHub Issues](https://github.com/dweepbot/dweepbot/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/dweepbot/dweepbot/discussions)
+- **Twitter**: [@dweepbot](https://twitter.com/dweepbot)
+
+---
+
+## ⭐ Star History
+
+If you find DweepBot useful, please star the repo! It helps others discover the project.
+
+[![Star History Chart](https://api.star-history.com/svg?repos=dweepbot/dweepbot&type=Date)](https://star-history.com/#dweepbot/dweepbot&Date)
+
+---
+
+**Built with ❤️ by the DweepBot team**
+
+*Making autonomous AI agents accessible to everyone*
