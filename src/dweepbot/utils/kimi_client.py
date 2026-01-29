@@ -1,144 +1,411 @@
-# dweepbot/utils/kimi_client.py
-import os
-from typing import AsyncIterator, Optional, List, Dict
-import openai
-from dataclasses import dataclass
+"""
+Kimi K2.5 client for Moonshot AI API.
+
+Kimi K2.5 is optimized for:
+- Coding tasks with 2M token context
+- Large codebase analysis
+- Long-form technical content
+
+Pricing: $0.15/1M input, $0.60/1M output
+"""
+
+from typing import Any, AsyncIterator, Dict, List, Optional
+from openai import AsyncOpenAI
 import asyncio
 
-@dataclass
-class KimiConfig:
-    api_key: str
-    model: str = "kimi-k2.5"  # or "kimi-k1.5" for reasoning
-    temperature: float = 0.3
-    max_tokens: Optional[int] = None
-    api_base: str = "https://api.moonshot.cn/v1"
+from ..utils.cost_tracker import CostTracker
+from ..utils.logger import get_logger
+
+logger = get_logger(__name__)
+
+
+# Kimi K2.5 pricing
+KIMI_INPUT_COST_PER_TOKEN = 0.15 / 1_000_000
+KIMI_OUTPUT_COST_PER_TOKEN = 0.60 / 1_000_000
+
 
 class KimiClient:
     """
-    Kimi K2.5 client for DweepBot.
-    Strengths: Coding, long context (2M tokens), fast inference.
+    Async client for Kimi K2.5 (Moonshot AI).
+    
+    Features:
+    - 2M token context window
+    - OpenAI-compatible API
+    - Specialized for coding tasks
+    - Streaming support
+    - Cost tracking integration
+    
+    Example:
+        ```python
+        client = KimiClient(api_key="your_key")
+        
+        # Generate code
+        code = await client.generate_code(
+            task="Create a binary search function",
+            language="python",
+        )
+        
+        # Analyze codebase
+        analysis = await client.analyze_codebase(
+            files={"main.py": code_content},
+            question="What does this function do?",
+        )
+        ```
     """
     
-    # Pricing (estimated, check current rates)
-    COST_PER_1M_INPUT = 0.15   # $0.15 per 1M input tokens
-    COST_PER_1M_OUTPUT = 0.60  # $0.60 per 1M output tokens
+    def __init__(
+        self,
+        api_key: str,
+        base_url: str = "https://api.moonshot.cn/v1",
+        model: str = "moonshot-v1-128k",
+        timeout: float = 60.0,
+        cost_tracker: Optional[CostTracker] = None,
+    ):
+        """
+        Initialize Kimi client.
+        
+        Args:
+            api_key: Moonshot AI API key
+            base_url: API base URL
+            model: Model name (moonshot-v1-8k, moonshot-v1-32k, moonshot-v1-128k)
+            timeout: Request timeout in seconds
+            cost_tracker: Optional cost tracker instance
+        """
+        self.api_key = api_key
+        self.base_url = base_url
+        self.model = model
+        self.timeout = timeout
+        self.cost_tracker = cost_tracker
+        
+        # Initialize OpenAI-compatible client
+        self._client = AsyncOpenAI(
+            api_key=api_key,
+            base_url=base_url,
+            timeout=timeout,
+        )
+        
+        logger.info(
+            "Kimi client initialized",
+            model=model,
+            base_url=base_url,
+        )
     
-    def __init__(self, config: Optional[KimiConfig] = None):
-        self.config = config or KimiConfig(
-            api_key=os.getenv("MOONSHOT_API_KEY", "")
-        )
-        self.client = openai.AsyncOpenAI(
-            api_key=self.config.api_key,
-            base_url=self.config.api_base,
-        )
-        self.total_cost = 0.0
-        self.total_tokens = 0
+    async def __aenter__(self):
+        return self
+    
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.close()
+    
+    async def close(self) -> None:
+        """Close the client."""
+        await self._client.close()
     
     async def complete(
         self,
         messages: List[Dict[str, str]],
-        stream: bool = True,
-    ) -> AsyncIterator[str]:
-        """Stream completion from Kimi."""
+        temperature: float = 0.7,
+        max_tokens: int = 4000,
+        stream: bool = False,
+        **kwargs,
+    ) -> Dict[str, Any]:
+        """
+        Create a chat completion.
         
+        Args:
+            messages: List of message dicts with 'role' and 'content'
+            temperature: Sampling temperature (0.0-1.0)
+            max_tokens: Maximum tokens to generate
+            stream: Whether to stream the response
+            **kwargs: Additional API parameters
+        
+        Returns:
+            API response dict with 'choices', 'usage', etc.
+        """
         try:
-            response = await self.client.chat.completions.create(
-                model=self.config.model,
+            response = await self._client.chat.completions.create(
+                model=self.model,
                 messages=messages,
-                temperature=self.config.temperature,
-                max_tokens=self.config.max_tokens,
+                temperature=temperature,
+                max_tokens=max_tokens,
                 stream=stream,
+                **kwargs,
             )
             
             if stream:
-                async for chunk in response:
-                    if chunk.choices[0].delta.content:
-                        yield chunk.choices[0].delta.content
-            else:
-                content = response.choices[0].message.content
-                yield content
-                
-        except Exception as e:
-            yield f"[Kimi Error: {str(e)}]"
-    
-    def estimate_cost(self, input_tokens: int, output_tokens: int) -> float:
-        """Calculate estimated cost for token usage."""
-        input_cost = (input_tokens / 1_000_000) * self.COST_PER_1M_INPUT
-        output_cost = (output_tokens / 1_000_000) * self.COST_PER_1M_OUTPUT
-        return input_cost + output_cost
-    
-    async def analyze_codebase(
-        self,
-        files: List[Dict[str, str]],
-        query: str,
-    ) -> str:
-        """
-        Kimi's killer feature: analyze massive codebases.
-        Fits entire repos in 2M token context.
-        """
-        
-        # Build context from files
-        context_parts = []
-        total_chars = 0
-        max_chars = 1_000_000  # Conservative limit
-        
-        for file in files:
-            content = f"### {file['path']}\n```{file['content']}```\n\n"
-            if total_chars + len(content) > max_chars:
-                break
-            context_parts.append(content)
-            total_chars += len(content)
-        
-        context = "".join(context_parts)
-        
-        messages = [
-            {
-                "role": "system",
-                "content": "You are an expert software engineer. Analyze the provided codebase and answer the user's question concisely."
-            },
-            {
-                "role": "user",
-                "content": f"Codebase:\n{context}\n\nQuestion: {query}"
+                # Streaming handled separately
+                return response
+            
+            # Convert to dict
+            result = {
+                "choices": [
+                    {
+                        "message": {
+                            "role": choice.message.role,
+                            "content": choice.message.content,
+                        },
+                        "finish_reason": choice.finish_reason,
+                    }
+                    for choice in response.choices
+                ],
+                "usage": {
+                    "prompt_tokens": response.usage.prompt_tokens,
+                    "completion_tokens": response.usage.completion_tokens,
+                    "total_tokens": response.usage.total_tokens,
+                },
             }
-        ]
+            
+            # Track costs
+            if self.cost_tracker:
+                self.cost_tracker.record_llm_call(
+                    prompt_tokens=response.usage.prompt_tokens,
+                    completion_tokens=response.usage.completion_tokens,
+                    phase="kimi_completion",
+                )
+            
+            logger.info(
+                "Kimi completion",
+                tokens=response.usage.total_tokens,
+                model=self.model,
+            )
+            
+            return result
+            
+        except Exception as e:
+            logger.error("Kimi API error", error=str(e))
+            raise
+    
+    async def complete_streaming(
+        self,
+        messages: List[Dict[str, str]],
+        temperature: float = 0.7,
+        max_tokens: int = 4000,
+        **kwargs,
+    ) -> AsyncIterator[str]:
+        """
+        Create a streaming chat completion.
         
-        response_chunks = []
-        async for chunk in self.complete(messages, stream=False):
-            response_chunks.append(chunk)
+        Args:
+            messages: List of message dicts
+            temperature: Sampling temperature
+            max_tokens: Maximum tokens to generate
+            **kwargs: Additional API parameters
         
-        return "".join(response_chunks)
+        Yields:
+            Text chunks as they arrive
+        """
+        try:
+            stream = await self._client.chat.completions.create(
+                model=self.model,
+                messages=messages,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                stream=True,
+                **kwargs,
+            )
+            
+            async for chunk in stream:
+                if chunk.choices and len(chunk.choices) > 0:
+                    delta = chunk.choices[0].delta
+                    if delta.content:
+                        yield delta.content
+                        
+        except Exception as e:
+            logger.error("Kimi streaming error", error=str(e))
+            raise
     
     async def generate_code(
         self,
-        prompt: str,
+        task: str,
         language: str = "python",
         context: Optional[str] = None,
+        temperature: float = 0.3,
     ) -> str:
         """
-        Optimized for code generation.
-        Uses Kimi's coding strengths.
+        Generate code for a specific task.
+        
+        Optimized for Kimi's coding strengths.
+        
+        Args:
+            task: Code generation task
+            language: Programming language
+            context: Optional additional context
+            temperature: Lower for more deterministic code
+        
+        Returns:
+            Generated code as string
         """
+        system_prompt = f"""You are an expert {language} programmer. 
+Generate clean, efficient, well-documented code.
+Include type hints, error handling, and docstrings where appropriate."""
+        
+        user_prompt = f"Task: {task}"
+        if context:
+            user_prompt += f"\n\nContext:\n{context}"
+        
+        user_prompt += f"\n\nGenerate {language} code for this task. Return only the code, no explanations."
         
         messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
+        
+        response = await self.complete(
+            messages=messages,
+            temperature=temperature,
+            max_tokens=4000,
+        )
+        
+        if response["choices"]:
+            content = response["choices"][0]["message"]["content"]
+            
+            # Extract code from markdown if present
+            if "```" in content:
+                # Find code block
+                import re
+                code_match = re.search(r'```(?:\w+)?\n(.*?)```', content, re.DOTALL)
+                if code_match:
+                    return code_match.group(1).strip()
+            
+            return content
+        
+        return ""
+    
+    async def analyze_codebase(
+        self,
+        files: Dict[str, str],
+        question: str,
+        max_files: int = 50,
+    ) -> str:
+        """
+        Analyze a codebase and answer questions.
+        
+        Leverages Kimi's 2M token context to analyze large codebases.
+        
+        Args:
+            files: Dict mapping filenames to file contents
+            question: Question about the codebase
+            max_files: Maximum number of files to include
+        
+        Returns:
+            Analysis result
+        """
+        # Build context from files
+        file_contexts = []
+        for filename, content in list(files.items())[:max_files]:
+            file_contexts.append(f"# File: {filename}\n```\n{content}\n```\n")
+        
+        combined_context = "\n".join(file_contexts)
+        
+        system_prompt = """You are a code analysis expert. 
+Analyze the provided codebase and answer questions accurately.
+Consider code structure, patterns, dependencies, and potential issues."""
+        
+        user_prompt = f"""Codebase:
+
+{combined_context}
+
+Question: {question}
+
+Provide a detailed analysis."""
+        
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
+        
+        response = await self.complete(
+            messages=messages,
+            temperature=0.5,
+            max_tokens=4000,
+        )
+        
+        if response["choices"]:
+            return response["choices"][0]["message"]["content"]
+        
+        return ""
+    
+    async def explain_code(
+        self,
+        code: str,
+        language: str = "python",
+    ) -> str:
+        """
+        Explain what a piece of code does.
+        
+        Args:
+            code: Code to explain
+            language: Programming language
+        
+        Returns:
+            Explanation
+        """
+        messages = [
             {
-                "role": "system",
-                "content": f"You are an expert {language} developer. Write clean, efficient, well-documented code."
+                "role": "user",
+                "content": f"Explain what this {language} code does:\n\n```{language}\n{code}\n```",
             }
         ]
         
-        if context:
-            messages.append({
-                "role": "user",
-                "content": f"Context:\n{context}\n\nTask: {prompt}"
-            })
-        else:
-            messages.append({
-                "role": "user",
-                "content": prompt
-            })
+        response = await self.complete(
+            messages=messages,
+            temperature=0.5,
+            max_tokens=2000,
+        )
         
-        response_chunks = []
-        async for chunk in self.complete(messages, stream=False):
-            response_chunks.append(chunk)
+        if response["choices"]:
+            return response["choices"][0]["message"]["content"]
         
-        return "".join(response_chunks)
+        return ""
+    
+    async def refactor_code(
+        self,
+        code: str,
+        instructions: str,
+        language: str = "python",
+    ) -> str:
+        """
+        Refactor code based on instructions.
+        
+        Args:
+            code: Code to refactor
+            instructions: Refactoring instructions
+            language: Programming language
+        
+        Returns:
+            Refactored code
+        """
+        messages = [
+            {
+                "role": "user",
+                "content": f"""Refactor this {language} code according to these instructions:
+
+Instructions: {instructions}
+
+Original code:
+```{language}
+{code}
+```
+
+Return only the refactored code, no explanations.""",
+            }
+        ]
+        
+        response = await self.complete(
+            messages=messages,
+            temperature=0.3,
+            max_tokens=4000,
+        )
+        
+        if response["choices"]:
+            content = response["choices"][0]["message"]["content"]
+            
+            # Extract code
+            if "```" in content:
+                import re
+                code_match = re.search(r'```(?:\w+)?\n(.*?)```', content, re.DOTALL)
+                if code_match:
+                    return code_match.group(1).strip()
+            
+            return content
+        
+        return ""
