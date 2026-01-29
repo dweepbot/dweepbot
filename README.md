@@ -414,3 +414,98 @@ If you find DweepBot useful, please star the repo! It helps others discover the 
 **Built with ❤️ by the DweepBot team**
 
 *Making autonomous AI agents accessible to everyone*
+DweepBot Pro - Complete File Structure
+dweepbot-pro/
+├── .env.example
+├── .gitignore
+├── LICENSE
+├── README.md
+├── pyproject.toml
+├── setup.py
+├── requirements.txt
+├── requirements-dev.txt
+├── Makefile
+├── docker-compose.yml
+├── Dockerfile
+│
+├── .github/
+│   └── workflows/
+│       ├── tests.yml
+│       └── publish.yml
+│
+├── src/
+│   └── dweepbot/
+│       ├── __init__.py
+│       ├── __version__.py
+│       ├── cli.py
+│       ├── config.py
+│       │
+│       ├── core/
+│       │   ├── __init__.py
+│       │   ├── agent.py           # Main AutonomousAgent class
+│       │   ├── planner.py         # TaskPlanner
+│       │   ├── executor.py        # ToolExecutor
+│       │   ├── reflection.py      # ReflectionEngine
+│       │   └── schemas.py         # Pydantic models
+│       │
+│       ├── tools/
+│       │   ├── __init__.py
+│       │   ├── base.py            # BaseTool abstract class
+│       │   ├── registry.py        # ToolRegistry
+│       │   ├── web_search.py      # DuckDuckGo search
+│       │   ├── python_executor.py # Sandboxed Python
+│       │   ├── file_ops.py        # File operations
+│       │   ├── shell_executor.py  # Limited shell
+│       │   ├── http_client.py     # HTTP requests
+│       │   ├── rag_query.py       # Vector DB query
+│       │   └── notification.py    # Webhooks
+│       │
+│       ├── memory/
+│       │   ├── __init__.py
+│       │   ├── working_memory.py  # Short-term memory
+│       │   ├── vector_store.py    # ChromaDB integration
+│       │   └── schemas.py         # Memory models
+│       │
+│       ├── state/
+│       │   ├── __init__.py
+│       │   ├── agent_state.py     # State management
+│       │   └── serialization.py   # State persistence
+│       │
+│       └── utils/
+│           ├── __init__.py
+│           ├── cost_tracker.py    # Token/cost tracking
+│           ├── logger.py          # Structured logging
+│           ├── validators.py      # Input validation
+│           └── deepseek_client.py # DeepSeek API client
+│
+├── tests/
+│   ├── __init__.py
+│   ├── conftest.py
+│   ├── unit/
+│   │   ├── __init__.py
+│   │   ├── test_agent.py
+│   │   ├── test_planner.py
+│   │   ├── test_executor.py
+│   │   ├── test_tools.py
+│   │   ├── test_memory.py
+│   │   └── test_cost_tracker.py
+│   │
+│   └── integration/
+│       ├── __init__.py
+│       ├── test_full_workflows.py
+│       └── test_tool_integration.py
+│
+├── examples/
+│   ├── basic_usage.py
+│   ├── research_task.py
+│   ├── code_generation.py
+│   └── custom_tools.py
+│
+├── docs/
+│   ├── architecture.md
+│   ├── api_reference.md
+│   ├── tool_development.md
+│   └── deployment.md
+│
+└── workspace/
+    └── .gitkeep
