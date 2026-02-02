@@ -2,7 +2,7 @@
 """
 Feature management for DweepBot.
 
-This module previously handled license gating but now all features are open source.
+This module previously handled license gating but now all features are open-source.
 It's kept for backward compatibility.
 """
 
@@ -65,7 +65,7 @@ class LicenseManager:
         Initialize license manager.
         
         Args:
-            license_key: No longer required - kept for backward compatibility
+            license_key: Ignored - kept for backward compatibility only
         """
         self.license_key = license_key
         self._validated = True  # Always validated now
