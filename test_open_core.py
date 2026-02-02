@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
 """
-Test suite for DweepBot open-core architecture.
+Test suite for DweepBot open-source features.
 
 This test verifies that:
-1. Community features work correctly
-2. Pro features are properly gated
-3. License system functions as expected
-4. Error messages are helpful
+1. All features work correctly
+2. License system exists for backward compatibility
+3. Pro features are now freely accessible
 """
 
 import sys
@@ -31,20 +30,18 @@ def test_license_manager():
     assert lm.has_feature('file_io'), "File I/O should be available"
     print("  ✅ Community features accessible")
     
-    # Test 3: Pro features blocked
-    try:
-        lm.has_feature('multi_agent')
-        assert False, "Should raise LicenseError"
-    except LicenseError as e:
-        assert 'DweepBot Pro' in str(e), "Error should mention Pro edition"
-        assert 'dweepbot.com/pro' in str(e), "Error should include upgrade URL"
-        print("  ✅ Pro features properly gated")
+    # Test 3: Pro features now also accessible (no license required)
+    assert lm.has_feature('multi_agent'), "Multi-agent should now be available"
+    assert lm.has_feature('vector_store'), "Vector store should now be available"
+    assert lm.has_feature('dashboard'), "Dashboard should now be available"
+    print("  ✅ Pro features now accessible without license")
     
-    # Test 4: Available features
+    # Test 4: Available features includes everything
     features = lm.get_available_features()
     assert 'core_agent' in features, "Core agent should be in available features"
-    assert 'multi_agent' not in features, "Multi-agent should not be available"
-    print("  ✅ Available features list correct")
+    assert 'multi_agent' in features, "Multi-agent should now be available"
+    assert 'vector_store' in features, "Vector store should now be available"
+    print("  ✅ All features are in available features list")
     
     print("✅ License Manager tests passed\n")
 
@@ -52,23 +49,22 @@ def test_license_manager():
 def test_pro_module_imports():
     """Test Pro module import behavior."""
     print("Testing Pro Module Imports...")
-    from dweepbot.license import LicenseError
     
-    # Test 1: Can import pro module (lazy loading)
+    # Test 1: Can import pro module
     try:
         from dweepbot import pro
-        print("  ✅ Pro module imports (lazy loading)")
+        print("  ✅ Pro module imports")
     except Exception as e:
         print(f"  ❌ Pro module import failed: {e}")
         return False
     
-    # Test 2: Accessing Pro class raises LicenseError
+    # Test 2: Can now access Pro classes without license
     try:
         from dweepbot.pro import MultiAgentOrchestrator
-        print("  ❌ Should have raised LicenseError")
+        print("  ✅ Pro classes now accessible without license")
+    except Exception as e:
+        print(f"  ❌ Pro class access failed: {e}")
         return False
-    except LicenseError:
-        print("  ✅ Pro class access properly blocked")
     
     print("✅ Pro module import tests passed\n")
 
@@ -87,37 +83,31 @@ def test_license_singleton():
     print("✅ Singleton tests passed\n")
 
 
-def test_error_messages():
-    """Test that error messages are helpful."""
-    print("Testing Error Messages...")
-    from dweepbot.license import get_license_manager, LicenseError
+def test_all_features_available():
+    """Test that all features are now available."""
+    print("Testing All Features Available...")
+    from dweepbot.license import get_license_manager
     
     lm = get_license_manager()
     
-    try:
-        lm.has_feature('multi_agent')
-    except LicenseError as e:
-        error_msg = str(e)
-        
-        # Check for key elements
-        assert 'multi_agent' in error_msg, "Should mention the feature"
-        assert 'DweepBot Pro' in error_msg, "Should mention Pro edition"
-        assert '$49/month' in error_msg or 'Pricing' in error_msg, "Should mention pricing"
-        assert 'dweepbot.com/pro' in error_msg, "Should include upgrade URL"
-        assert 'sales@dweepbot.com' in error_msg, "Should include contact email"
-        
-        print("  ✅ Error message includes feature name")
-        print("  ✅ Error message includes Pro edition mention")
-        print("  ✅ Error message includes pricing info")
-        print("  ✅ Error message includes upgrade URL")
-        print("  ✅ Error message includes contact email")
+    # Test all pro features
+    pro_features = ['multi_agent', 'vector_store', 'dashboard', 'task_scheduler', 'advanced_memory']
+    for feature in pro_features:
+        assert lm.has_feature(feature), f"{feature} should be available"
+        print(f"  ✅ {feature} is accessible")
     
-    print("✅ Error message tests passed\n")
+    # Test enterprise features
+    enterprise_features = ['audit_logs', 'compliance_tools', 'white_label']
+    for feature in enterprise_features:
+        assert lm.has_feature(feature), f"{feature} should be available"
+        print(f"  ✅ {feature} is accessible")
+    
+    print("✅ All features available tests passed\n")
 
 
 def test_community_functionality():
-    """Test that Community edition core features are accessible."""
-    print("Testing Community Edition Functionality...")
+    """Test that core features are accessible."""
+    print("Testing Core Functionality...")
     
     # Test imports work
     try:
@@ -136,13 +126,13 @@ def test_community_functionality():
     features = lm.get_available_features()
     print(f"  ✅ Available features: {len(features)} features")
     
-    print("✅ Community functionality tests passed\n")
+    print("✅ Core functionality tests passed\n")
 
 
 def run_all_tests():
     """Run all tests."""
     print("=" * 70)
-    print("DweepBot Open-Core Architecture Tests")
+    print("DweepBot Open Source Tests")
     print("=" * 70)
     print()
     
@@ -150,7 +140,7 @@ def run_all_tests():
         test_license_manager,
         test_pro_module_imports,
         test_license_singleton,
-        test_error_messages,
+        test_all_features_available,
         test_community_functionality,
     ]
     

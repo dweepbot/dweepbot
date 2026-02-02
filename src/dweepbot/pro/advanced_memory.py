@@ -1,6 +1,6 @@
-# SPDX-License-Identifier: COMMERCIAL
+# SPDX-License-Identifier: MIT
 """
-Advanced Memory Systems - DweepBot Pro Feature
+Advanced Memory Systems
 
 Enhanced memory capabilities beyond basic working memory.
 
@@ -11,7 +11,7 @@ Features:
 - Memory summarization and pruning
 - Cross-agent memory sharing
 
-License: Commercial - https://dweepbot.com/pro
+License: MIT
 """
 
 from typing import List, Dict, Any, Optional

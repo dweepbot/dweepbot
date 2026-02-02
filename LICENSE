@@ -19,20 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-ADDITIONAL TERMS FOR COMMERCIAL MODULES
-
-Modules within the "pro/" directory and files marked with "SPDX-License-Identifier: COMMERCIAL"
-are proprietary software and are NOT covered by the MIT License above.
-
-These commercial modules are subject to a separate commercial license agreement.
-For commercial licensing terms and pricing, please visit:
-
-    https://dweepbot.com/pro
-
-or contact: sales@dweepbot.com
-
-Unauthorized use, copying, modification, or distribution of commercial modules
-is strictly prohibited and may result in severe civil and criminal penalties.
