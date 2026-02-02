@@ -61,5 +61,17 @@ Thumbs.db
 
 # DweepBot specific
 vector_db/
+chroma_db/
+chroma_data/
+redis_data/
 *.db
 agent_states/
+
+# Dashboard (Pro)
+dashboard/node_modules/
+dashboard/dist/
+dashboard/build/
+dashboard/.vite/
+
+# Docker volumes
+data/

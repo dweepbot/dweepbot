@@ -4,21 +4,22 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dweepbot"
-version = "0.1.0"
-description = "Production-grade autonomous AI agent framework with DeepSeek integration"
+version = "1.0.0"
+description = "Production-grade autonomous AI agent framework - Community and Pro editions"
 readme = "README.md"
 requires-python = ">=3.10"
-license = {text = "MIT"}
+license = {text = "MIT (Community) / Commercial (Pro)"}
 authors = [
     {name = "DweepBot Team", email = "hello@dweepbot.com"}
 ]
-keywords = ["ai", "agent", "autonomous", "deepseek", "llm", "framework", "automation"]
+keywords = ["ai", "agent", "autonomous", "deepseek", "llm", "framework", "automation", "open-core"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries :: Application Frameworks",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "License :: OSI Approved :: MIT License",
+    "License :: Other/Proprietary License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -54,6 +55,14 @@ notifications = [
     "slack-sdk>=3.23.0",
     "discord.py>=2.3.0",
 ]
+pro = [
+    "chromadb>=0.4.0",
+    "sentence-transformers>=2.2.0",
+    "fastapi>=0.104.0",
+    "uvicorn>=0.24.0",
+    "redis>=5.0.0",
+    "websockets>=12.0",
+]
 dev = [
     "pytest>=7.4.0",
     "pytest-asyncio>=0.21.0",
@@ -66,12 +75,18 @@ dev = [
 all = [
     "dweepbot[web,docs,rag,notifications]",
 ]
+pro-all = [
+    "dweepbot[web,docs,rag,notifications,pro]",
+]
 
 [project.urls]
 Homepage = "https://github.com/dweepbot/dweepbot"
 Repository = "https://github.com/dweepbot/dweepbot"
 Documentation = "https://github.com/dweepbot/dweepbot/tree/main/docs"
 "Bug Reports" = "https://github.com/dweepbot/dweepbot/issues"
+"Pro Edition" = "https://dweepbot.com/pro"
+"Commercial License" = "https://github.com/dweepbot/dweepbot/blob/main/LICENSE-COMMERCIAL.md"
+"Getting Started (Pro)" = "https://github.com/dweepbot/dweepbot/blob/main/GETTING_STARTED_PRO.md"
 
 [project.scripts]
 dweepbot = "dweepbot.cli:main"
