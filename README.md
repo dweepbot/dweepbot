@@ -1,25 +1,41 @@
-# 🦈 DweepBot Pro
+# 🦈 DweepBot - Autonomous AI Agent Framework
 
-**Production-grade autonomous AI agent framework**  
-*Clawdbot autonomy at DeepSeek prices*
+**Production-grade autonomous AI agents at DeepSeek prices**  
+*Available in Community (Open Source) and Pro (Commercial) editions*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![Pro License](https://img.shields.io/badge/Pro-Commercial-blue.svg)](https://dweepbot.com/pro)
 
 ---
 
 ## 🎯 What is DweepBot?
 
-DweepBot is an open-source autonomous agent framework built for **real production workloads**. It delivers the same PLAN → ACT → OBSERVE → REFLECT autonomy as expensive alternatives like Clawdbot, but at **50-60× lower cost** by using DeepSeek-V3.
+DweepBot is an **open-core autonomous agent framework** built for real production workloads. It delivers the same PLAN → ACT → OBSERVE → REFLECT autonomy as expensive alternatives, but at **50-60× lower cost** by using DeepSeek-V3.
 
-### Key Features
+### 🆓 Community Edition (Open Source - MIT License)
+
+Perfect for individual developers, learning, and non-commercial projects:
 
 ✨ **Full Autonomy**: Real PLAN → ACT → OBSERVE → REFLECT loop, not a chatbot wrapper  
 💰 **Cost-Effective**: $0.27/1M input tokens vs GPT-4's $15/1M (55× cheaper)  
-🛠️ **Batteries Included**: 8+ production-ready tools out of the box  
-🧠 **Memory System**: Working memory + optional RAG for complex tasks  
+🛠️ **Core Tools**: File I/O, HTTP client, Python execution  
+🧠 **Basic Memory**: Working memory for task context  
 🔒 **Production-Ready**: Error boundaries, cost tracking, state persistence  
 🎨 **Developer-Friendly**: Clean APIs, full type hints, async/await  
+
+### 💎 DweepBot Pro (Commercial License)
+
+Built for teams and production deployments. **Starting at $49/month**:
+
+🚀 **Multi-Agent Orchestration**: Coordinate multiple agents on complex tasks  
+🧠 **Advanced Memory Systems**: Vector store (ChromaDB) with semantic search  
+⏰ **Task Scheduler**: Cron-style automation and recurring tasks  
+📊 **Web Dashboard**: Real-time monitoring and control center  
+🔄 **Enterprise Features**: Audit logs, compliance tools, white-label options  
+🎯 **Priority Support**: Email support with < 24hr response time  
+
+[**Get DweepBot Pro →**](https://dweepbot.com/pro)  
 
 ---
 
@@ -50,6 +66,23 @@ git clone https://github.com/dweepbot/dweepbot.git
 cd dweepbot
 pip install -e ".[all]"
 ```
+
+### Activating Pro Features
+
+If you have a Pro license:
+
+```bash
+# Set your license key
+export DWEEPBOT_LICENSE='your-license-key'
+
+# Install Pro dependencies
+pip install chromadb sentence-transformers fastapi uvicorn
+
+# Start the dashboard (optional)
+cd dashboard && npm install && npm run dev
+```
+
+See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for complete Pro setup instructions.
 
 ---
 
@@ -202,11 +235,15 @@ tools.register(MyCustomTool(context))
 
 ---
 
+---
+
 ## 🏗️ Architecture
+
+### Community Edition (Open Source)
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│                  Autonomous Agent                    │
+│              Autonomous Agent (MIT)                  │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐          │
 │  │   PLAN   │→ │   ACT    │→ │  OBSERVE │          │
 │  └──────────┘  └──────────┘  └──────────┘          │
@@ -215,14 +252,107 @@ tools.register(MyCustomTool(context))
 └─────────────────────────────────────────────────────┘
            │                    │
     ┌──────▼──────┐      ┌─────▼──────┐
-    │  Tool       │      │   Memory    │
-    │  Registry   │      │   Manager   │
+    │  Tool       │      │   Working   │
+    │  Registry   │      │   Memory    │
     │             │      │             │
-    │ - File I/O  │      │ - Working   │
-    │ - Code Exec │      │ - Vector DB │
-    │ - Web       │      │ - RAG       │
+    │ - File I/O  │      │ - Context   │
+    │ - Code Exec │      │ - History   │
+    │ - HTTP      │      │             │
     └─────────────┘      └─────────────┘
 ```
+
+### Pro Edition (Commercial)
+
+```
+┌──────────────────────────────────────────────────────────┐
+│         Multi-Agent Orchestration (Pro) 💎                │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐               │
+│  │ Agent 1  │  │ Agent 2  │  │ Agent 3  │               │
+│  └──────────┘  └──────────┘  └──────────┘               │
+│       ↓              ↓              ↓                     │
+│  ┌────────────────────────────────────────┐              │
+│  │       Task Scheduler & Queue           │              │
+│  └────────────────────────────────────────┘              │
+└──────────────────────────────────────────────────────────┘
+           │                    │
+    ┌──────▼──────┐      ┌─────▼──────────────┐
+    │  Advanced   │      │  Web Dashboard 📊   │
+    │  Memory     │      │                     │
+    │             │      │ - Real-time UI      │
+    │ - Vector DB │      │ - Agent Control     │
+    │ - Semantic  │      │ - Analytics         │
+    │   Search    │      │ - Multi-agent View  │
+    └─────────────┘      └─────────────────────┘
+```
+
+---
+
+## 💎 Feature Comparison
+
+| Feature | Community (Free) | Pro ($49/mo) | Enterprise (Custom) |
+|---------|------------------|--------------|---------------------|
+| **Core Autonomy** | ✅ PLAN→ACT→OBSERVE→REFLECT | ✅ | ✅ |
+| **File I/O Tools** | ✅ | ✅ | ✅ |
+| **Python Execution** | ✅ | ✅ | ✅ |
+| **HTTP Client** | ✅ | ✅ | ✅ |
+| **CLI Interface** | ✅ | ✅ | ✅ |
+| **Cost Tracking** | ✅ | ✅ | ✅ |
+| **Working Memory** | ✅ | ✅ | ✅ |
+| **Multi-Agent Orchestration** | ❌ | ✅ Up to 5 agents | ✅ Unlimited |
+| **Vector Store (ChromaDB)** | ❌ | ✅ | ✅ |
+| **Semantic Memory Search** | ❌ | ✅ | ✅ |
+| **Task Scheduler** | ❌ | ✅ 50 tasks | ✅ Unlimited |
+| **Web Dashboard** | ❌ | ✅ | ✅ |
+| **Real-time Monitoring** | ❌ | ✅ | ✅ |
+| **Audit Logs** | ❌ | ❌ | ✅ |
+| **Compliance Tools** | ❌ | ❌ | ✅ |
+| **White-Label** | ❌ | ❌ | ✅ |
+| **Support** | Community | Email (< 24hr) | Dedicated + SLA |
+| **Commercial Use** | ✅ | ✅ | ✅ |
+
+---
+
+## 💰 Pricing
+
+### Community Edition - **FREE** ✨
+- Perfect for individual developers and learning
+- Full core functionality (PLAN→ACT→OBSERVE→REFLECT)
+- All basic tools included
+- MIT License - use anywhere
+- Community support via GitHub
+
+### Pro Edition - **$49/month** 💎
+- Everything in Community, plus:
+- Multi-agent orchestration (up to 5 concurrent agents)
+- Vector store & advanced memory
+- Task scheduler (up to 50 scheduled tasks)
+- Web dashboard with real-time monitoring
+- Priority email support (< 24 hour response)
+- **[Get Pro License →](https://dweepbot.com/pro)**
+
+### Team Edition - **$199/month** 🚀
+- Everything in Pro, plus:
+- Up to 20 concurrent agents
+- Unlimited scheduled tasks
+- Team collaboration features
+- Shared memory across agents
+- Advanced analytics
+- **[Contact Sales →](mailto:sales@dweepbot.com)**
+
+### Enterprise Edition - **Custom** 🏢
+- Everything in Team, plus:
+- Unlimited agents
+- Audit logs & compliance tools
+- White-label deployment
+- Custom integrations
+- On-premise installation
+- SLA with priority support
+- Dedicated account manager
+- **[Contact Enterprise Sales →](mailto:enterprise@dweepbot.com)**
+
+---
+
+## 🏗️ Architecture
 
 ### Core Components
 
@@ -322,33 +452,58 @@ pytest tests/integration/
 
 ## 🛣️ Roadmap
 
-### Phase 1: Core ✅ (Current)
+### Community Edition (Open Source)
+
+**Current - v1.0** ✅
 - [x] PLAN→ACT→OBSERVE→REFLECT loop
-- [x] Tool system with 8+ tools
+- [x] Tool system with core tools (File I/O, HTTP, Python exec)
 - [x] Cost tracking & limits
 - [x] Working memory
 - [x] Production error handling
+- [x] MIT License
 
-### Phase 2: Enhanced Tools (Next 2 weeks)
-- [ ] Web browser automation (Playwright)
-- [ ] Document processing (PDF/DOCX)
+**Next - v1.1** (Q1 2026)
+- [ ] Enhanced documentation
+- [ ] More example projects
+- [ ] Performance optimizations
+- [ ] Additional basic tools
+- [ ] Improved error messages
+
+### Pro Edition (Commercial)
+
+**Available Now** 💎
+- [x] Multi-agent orchestration
+- [x] Vector store (ChromaDB integration)
+- [x] Task scheduler with cron support
+- [x] Web dashboard & command center
+- [x] Advanced memory systems
+
+**Coming Q1 2026**
+- [ ] Pinecone & Weaviate vector store support
+- [ ] Advanced analytics dashboard
+- [ ] Webhook integrations (Slack, Discord, Teams)
 - [ ] Database tools (SQL, MongoDB)
-- [ ] API integration templates
-- [ ] Notification system (Discord/Slack)
+- [ ] Browser automation (Playwright integration)
 
-### Phase 3: Advanced Features (Month 2)
-- [ ] Vector store integration (ChromaDB)
-- [ ] Multi-agent orchestration
-- [ ] Task scheduling & cron
-- [ ] Web dashboard for monitoring
-- [ ] LangSmith integration
-
-### Phase 4: Enterprise (Month 3+)
+**Coming Q2 2026**
 - [ ] Team collaboration features
-- [ ] Audit logs & compliance
-- [ ] Custom model support
-- [ ] On-premise deployment
-- [ ] SLA & support tiers
+- [ ] Shared agent workspaces
+- [ ] Role-based access control
+- [ ] Advanced audit logging
+
+### Enterprise Edition (Custom)
+
+**Available Now** 🏢
+- [x] All Pro features
+- [x] White-label deployment
+- [x] Custom integrations
+- [x] SLA & priority support
+
+**Roadmap** (Custom timeline)
+- [ ] Air-gapped deployment options
+- [ ] SAML/SSO integration
+- [ ] Custom compliance reports
+- [ ] Dedicated infrastructure options
 
 ---
 
@@ -382,7 +537,16 @@ ruff check src/ tests/
 
 ## 📄 License
 
-MIT License - see [LICENSE](LICENSE) for details.
+DweepBot uses an **open-core model**:
+
+- **Community Edition**: MIT License - see [LICENSE](LICENSE)
+- **Pro Edition**: Commercial License - see [LICENSE-COMMERCIAL.md](LICENSE-COMMERCIAL.md)
+
+All code in the `src/dweepbot/oss/` directory and files marked with `SPDX-License-Identifier: MIT` 
+are open source and free to use under the MIT License.
+
+Code in the `src/dweepbot/pro/` directory and files marked with `SPDX-License-Identifier: COMMERCIAL`
+require a commercial license. Get your license at [dweepbot.com/pro](https://dweepbot.com/pro).
 
 ---
 
@@ -390,16 +554,35 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 - DeepSeek for providing cost-effective, high-quality LLMs
 - The open-source AI community for inspiration and tools
-- Early testers and contributors
+- Our Pro customers for supporting development
 
 ---
 
 ## 📞 Support
 
-- **Documentation**: [docs.dweepbot.dev](https://docs.dweepbot.dev) (coming soon)
+### Community Edition (Open Source)
+- **Documentation**: [GitHub Wiki](https://github.com/dweepbot/dweepbot/wiki)
 - **Issues**: [GitHub Issues](https://github.com/dweepbot/dweepbot/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/dweepbot/dweepbot/discussions)
-- **Twitter**: [@dweepbot](https://twitter.com/dweepbot)
+- **Discord**: [Join our community](https://discord.gg/dweepbot)
+
+### Pro Edition Support
+- **Email**: support@dweepbot.com (< 24hr response)
+- **Documentation**: [Pro Docs](https://docs.dweepbot.dev/pro)
+- **Deployment Guide**: [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)
+- **Status Page**: [status.dweepbot.com](https://status.dweepbot.com)
+
+### Enterprise Support
+- **Dedicated Support**: enterprise@dweepbot.com
+- **Phone Support**: Available with Enterprise SLA
+- **Private Slack**: Dedicated channel for your team
+- **Custom Integrations**: We'll build what you need
+
+### Sales & Licensing
+- **Pro License**: [dweepbot.com/pro](https://dweepbot.com/pro)
+- **Sales Inquiries**: sales@dweepbot.com
+- **Custom Quotes**: enterprise@dweepbot.com
+- **Partnerships**: partners@dweepbot.com
 
 ---
 

@@ -1,26 +1,34 @@
+# SPDX-License-Identifier: COMMERCIAL
 """
-Vector store implementation using ChromaDB.
+Vector store implementation using ChromaDB - DweepBot Pro Feature
+
+This module requires a DweepBot Pro license.
+See LICENSE-COMMERCIAL.md for details.
 """
 
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from .schemas import VectorDocument, QueryResult
 from ..utils.logger import get_logger
+from ..license import require_pro_feature
 
 logger = get_logger(__name__)
 
 
 class VectorMemory:
     """
-    Vector database for long-term memory using ChromaDB.
+    Vector database for long-term memory using ChromaDB - DweepBot Pro Feature
     
     Features:
     - Semantic search over documents
     - Persistent storage
     - Multiple collections
     - Automatic embeddings
+    
+    Requires: DweepBot Pro license
     """
     
+    @require_pro_feature('vector_store')
     def __init__(
         self,
         persist_directory: Optional[Path] = None,

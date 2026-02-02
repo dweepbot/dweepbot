@@ -1,3 +1,16 @@
+# SPDX-License-Identifier: COMMERCIAL
+"""
+DweepBot Pro - API Server & Dashboard Backend
+
+Web API and WebSocket server for the DweepBot Pro command center dashboard.
+Provides real-time monitoring and control of autonomous agents.
+
+This is a commercial component requiring a DweepBot Pro license.
+See LICENSE-COMMERCIAL.md for details.
+
+Copyright © 2026 DweepBot Inc. All rights reserved.
+"""
+
 # api_server.py
 import asyncio
 import json
@@ -12,8 +25,9 @@ import uvicorn
 # Import dweepbot modules
 from dweepbot import AutonomousAgent, AgentConfig, create_registry_with_default_tools
 from dweepbot.utils.deepseek_client import DeepSeekClient
-from dweepbot.state.agent_state import AgentState
+from dweepbot.stae.agent_state import AgentState
 from dweepbot.utils.cost_tracker import CostTracker
+from dweepbot.license import get_license_manager, LicenseError
 
 # --- Data Models ---
 class AgentTask(BaseModel):
@@ -60,10 +74,24 @@ state = CommandCenterState()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    print("🦈 Shark Command Center API starting...")
+    print("🦈 DweepBot Pro Command Center API starting...")
+    
+    # Check license on startup
+    license_mgr = get_license_manager()
+    try:
+        # Check for dashboard feature
+        license_mgr.has_feature('dashboard')
+        print(f"✅ License validated - Tier: {license_mgr.get_tier()}")
+    except LicenseError as e:
+        print(f"\n⚠️  License Warning:")
+        print(str(e))
+        print("\nAPI server starting in limited mode.")
+        print("Some features may not be available.\n")
+    
     yield
+    
     # Shutdown
-    print("🦈 Shark Command Center API shutting down...")
+    print("🦈 DweepBot Pro Command Center API shutting down...")
     for agent_id in list(state.active_agents.keys()):
         await state.active_agents[agent_id].stop()
         state.remove_agent(agent_id)
@@ -78,6 +106,36 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# --- Health & License Status Endpoints ---
+@app.get("/health")
+async def health_check():
+    """Health check endpoint."""
+    return {
+        "status": "healthy",
+        "service": "dweepbot-pro-api",
+        "active_agents": len(state.active_agents)
+    }
+
+@app.get("/license/status")
+async def license_status():
+    """Check license status."""
+    license_mgr = get_license_manager()
+    try:
+        tier = license_mgr.get_tier()
+        features = list(license_mgr.get_available_features())
+        return {
+            "valid": True,
+            "tier": tier.value,
+            "available_features": features
+        }
+    except Exception as e:
+        return {
+            "valid": False,
+            "tier": "community",
+            "message": "No valid Pro license found",
+            "upgrade_url": "https://dweepbot.com/pro"
+        }
 
 # --- WebSocket for Real-Time Streams ---
 @app.websocket("/ws/{agent_id}")
