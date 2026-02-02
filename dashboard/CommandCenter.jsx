@@ -1,3 +1,15 @@
+// SPDX-License-Identifier: COMMERCIAL
+/**
+ * DweepBot Pro - Command Center Dashboard
+ * 
+ * Real-time monitoring and control for DweepBot autonomous agents.
+ * 
+ * This is a commercial component requiring a DweepBot Pro license.
+ * See LICENSE-COMMERCIAL.md for details.
+ * 
+ * Copyright © 2026 DweepBot Inc. All rights reserved.
+ */
+
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 

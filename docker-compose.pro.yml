@@ -1,0 +1,118 @@
+version: '3.8'
+
+# DweepBot Pro - Docker Compose Configuration
+# 
+# This configuration deploys DweepBot Pro with all commercial features.
+# Requires valid DweepBot Pro license key.
+#
+# Usage:
+#   docker-compose -f docker-compose.pro.yml up -d
+
+services:
+  # Main DweepBot Pro API Server
+  dweepbot-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dweepbot-pro-api
+    restart: unless-stopped
+    environment:
+      # License (REQUIRED)
+      - DWEEPBOT_LICENSE=${DWEEPBOT_LICENSE}
+      
+      # API Keys
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      
+      # Pro Features
+      - DWEEPBOT_MAX_AGENTS=5
+      - DWEEPBOT_VECTOR_STORE=chromadb
+      - DWEEPBOT_SCHEDULER_ENABLED=true
+      - DWEEPBOT_VECTOR_PERSIST_PATH=/app/chroma_db
+      
+      # API Configuration
+      - DWEEPBOT_DASHBOARD_HOST=0.0.0.0
+      - DWEEPBOT_DASHBOARD_PORT=8000
+      - DWEEPBOT_RATE_LIMIT_ENABLED=true
+      
+      # Production Settings
+      - DWEEPBOT_LOG_LEVEL=INFO
+      - DWEEPBOT_TELEMETRY_ENABLED=true
+      
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./workspace:/app/workspace
+      - ./chroma_db:/app/chroma_db
+      - ./logs:/app/logs
+      - ./data:/app/data
+    command: python api_server.py --host 0.0.0.0 --port 8000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ChromaDB Vector Store (for advanced memory)
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: dweepbot-chromadb
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./chroma_data:/chroma/chroma
+    environment:
+      - ANONYMIZED_TELEMETRY=false
+      - ALLOW_RESET=true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis (for task scheduling and caching)
+  redis:
+    image: redis:7-alpine
+    container_name: dweepbot-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Dashboard UI (optional - can also be served statically via nginx)
+  # Uncomment to run dashboard in development mode
+  # dweepbot-dashboard:
+  #   build:
+  #     context: ./dashboard
+  #     dockerfile: Dockerfile
+  #   container_name: dweepbot-dashboard
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - dweepbot-api
+  #   environment:
+  #     - VITE_API_URL=http://localhost:8000
+
+volumes:
+  workspace:
+  chroma_data:
+  chroma_db:
+  redis_data:
+  logs:
+  data:
+
+networks:
+  default:
+    name: dweepbot-network
+    driver: bridge
