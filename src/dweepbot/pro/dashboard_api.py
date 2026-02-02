@@ -1,8 +1,8 @@
-# SPDX-License-Identifier: COMMERCIAL
+# SPDX-License-Identifier: MIT
 """
-Dashboard Backend API - DweepBot Pro Feature
+Dashboard Backend API
 
-REST API backend for the DweepBot Pro command center dashboard.
+REST API backend for the DweepBot command center dashboard.
 
 Features:
 - Real-time agent monitoring via WebSocket
@@ -11,7 +11,7 @@ Features:
 - Multi-agent fleet visualization
 - System health monitoring
 
-License: Commercial - https://dweepbot.com/pro
+License: MIT
 """
 
 from typing import Dict, Any, List, Optional

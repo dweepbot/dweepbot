@@ -5,21 +5,20 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "dweepbot"
 version = "1.0.0"
-description = "Production-grade autonomous AI agent framework - Community and Pro editions"
+description = "Production-grade autonomous AI agent framework"
 readme = "README.md"
 requires-python = ">=3.10"
-license = {text = "MIT (Community) / Commercial (Pro)"}
+license = {text = "MIT"}
 authors = [
     {name = "DweepBot Team", email = "hello@dweepbot.com"}
 ]
-keywords = ["ai", "agent", "autonomous", "deepseek", "llm", "framework", "automation", "open-core"]
+keywords = ["ai", "agent", "autonomous", "deepseek", "llm", "framework", "automation"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries :: Application Frameworks",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "License :: OSI Approved :: MIT License",
-    "License :: Other/Proprietary License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -84,9 +83,6 @@ Homepage = "https://github.com/dweepbot/dweepbot"
 Repository = "https://github.com/dweepbot/dweepbot"
 Documentation = "https://github.com/dweepbot/dweepbot/tree/main/docs"
 "Bug Reports" = "https://github.com/dweepbot/dweepbot/issues"
-"Pro Edition" = "https://dweepbot.com/pro"
-"Commercial License" = "https://github.com/dweepbot/dweepbot/blob/main/LICENSE-COMMERCIAL.md"
-"Getting Started (Pro)" = "https://github.com/dweepbot/dweepbot/blob/main/GETTING_STARTED_PRO.md"
 
 [project.scripts]
 dweepbot = "dweepbot.cli:main"

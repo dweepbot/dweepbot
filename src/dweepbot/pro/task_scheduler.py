@@ -1,6 +1,6 @@
-# SPDX-License-Identifier: COMMERCIAL
+# SPDX-License-Identifier: MIT
 """
-Task Scheduler - DweepBot Pro Feature
+Task Scheduler
 
 Schedule and automate agent tasks with cron-like functionality.
 
@@ -11,7 +11,7 @@ Features:
 - Automatic retries
 - Email/webhook notifications on completion
 
-License: Commercial - https://dweepbot.com/pro
+License: MIT
 """
 
 from typing import Callable, Dict, Any, Optional, List

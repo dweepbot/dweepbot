@@ -1,6 +1,6 @@
-# SPDX-License-Identifier: COMMERCIAL
+# SPDX-License-Identifier: MIT
 """
-Multi-Agent Orchestration - DweepBot Pro Feature
+Multi-Agent Orchestration
 
 Coordinate multiple autonomous agents to work on complex tasks together.
 
@@ -11,7 +11,7 @@ Features:
 - Conflict resolution
 - Progress aggregation
 
-License: Commercial - https://dweepbot.com/pro
+License: MIT
 """
 
 from typing import List, Dict, Any, Optional
