@@ -1,61 +1,29 @@
-# DweepBot Pro Deployment Guide
+# DweepBot Deployment Guide
 
-This guide covers deploying DweepBot Pro features in production environments.
+This guide covers deploying DweepBot and its advanced features in production environments.
 
 ## Prerequisites
 
-- Valid DweepBot Pro license key
 - Python 3.10+
 - Docker (optional, for containerized deployment)
 - Node.js 18+ (for dashboard)
-
-## License Activation
-
-### Step 1: Obtain License Key
-
-Purchase a DweepBot Pro license at https://dweepbot.com/pro
-
-You will receive:
-- License key (UUID format)
-- License tier (Pro, Team, or Enterprise)
-- Support contact information
-
-### Step 2: Configure License
-
-Set your license key as an environment variable:
-
-```bash
-export DWEEPBOT_LICENSE='your-license-key-here'
-```
-
-Or add to your `.env` file:
-
-```
-DWEEPBOT_LICENSE=your-license-key-here
-```
-
-### Step 3: Verify License
-
-```bash
-python -c "from dweepbot.license import get_license_manager; print(get_license_manager().get_tier())"
-```
 
 ## Installation
 
 ### Standard Installation
 
 ```bash
-# Install DweepBot with Pro features
+# Install DweepBot with all features
 pip install "dweepbot[all]"
 
-# Install additional Pro dependencies
+# Install additional advanced dependencies
 pip install chromadb sentence-transformers fastapi uvicorn
 ```
 
 ### Docker Installation
 
 ```bash
-# Build Pro image
+# Build image
 docker-compose -f docker-compose.pro.yml build
 
 # Start services
@@ -68,15 +36,11 @@ docker-compose -f docker-compose.pro.yml up -d
 
 #### Required
 ```bash
-DWEEPBOT_LICENSE=your-license-key          # Pro license key
 DEEPSEEK_API_KEY=your-deepseek-key         # DeepSeek API key
 ```
 
-#### Optional - Pro Features
+#### Optional - Advanced Features
 ```bash
-# License Server
-DWEEPBOT_LICENSE_SERVER=https://license.dweepbot.com/v1/validate
-
 # Multi-Agent Settings
 DWEEPBOT_MAX_AGENTS=5                      # Max concurrent agents
 DWEEPBOT_AGENT_POOL_SIZE=10                # Agent pool size
@@ -110,7 +74,7 @@ DWEEPBOT_LOG_LEVEL=INFO                    # DEBUG, INFO, WARNING, ERROR
 DWEEPBOT_LOG_FILE=./logs/dweepbot.log      # Log file path
 ```
 
-## Deploying Pro Features
+## Deploying Advanced Features
 
 ### 1. Multi-Agent Orchestration
 
@@ -241,7 +205,6 @@ services:
   dweepbot-api:
     build: .
     environment:
-      - DWEEPBOT_LICENSE=${DWEEPBOT_LICENSE}
       - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
       - DWEEPBOT_VECTOR_STORE=chromadb
       - DWEEPBOT_SCHEDULER_ENABLED=true
@@ -272,9 +235,9 @@ services:
 
 ## Security Best Practices
 
-### 1. License Key Security
+### 1. API Key Security
 
-- Never commit license keys to version control
+- Never commit API keys to version control
 - Use environment variables or secrets management
 - Rotate keys if compromised
 - Use different keys for dev/staging/production
@@ -308,9 +271,6 @@ DWEEPBOT_API_SECRET_KEY=your-secret-key
 ```bash
 # API health
 curl http://localhost:8000/health
-
-# License status
-curl http://localhost:8000/license/status
 ```
 
 ### Metrics
@@ -331,16 +291,6 @@ logging.getLogger('dweepbot').setLevel(logging.INFO)
 ```
 
 ## Troubleshooting
-
-### License Issues
-
-**Problem**: `LicenseError: Pro feature requires license`
-
-**Solutions**:
-1. Verify DWEEPBOT_LICENSE is set
-2. Check license key validity at https://dweepbot.com/license/verify
-3. Ensure license tier includes the feature
-4. Contact support@dweepbot.com if issues persist
 
 ### Connection Issues
 
@@ -364,37 +314,10 @@ logging.getLogger('dweepbot').setLevel(logging.INFO)
 
 ## Support
 
-### Community Support (Open Source)
+### Community Support
 - GitHub Issues: https://github.com/dweepbot/dweepbot/issues
 - Documentation: https://docs.dweepbot.dev
-
-### Pro Support
-- Email: support@dweepbot.com
-- Priority ticket portal: https://support.dweepbot.com
-- Response time: < 24 hours (business days)
-
-### Enterprise Support
-- Dedicated Slack channel
-- Phone support
-- Custom SLA available
-- Contact: enterprise@dweepbot.com
-
-## Upgrade Path
-
-### From Community to Pro
-
-1. Purchase Pro license at https://dweepbot.com/pro
-2. Set DWEEPBOT_LICENSE environment variable
-3. Restart your application
-4. Pro features are immediately available
-
-No code changes required - the same codebase supports both editions.
-
-### License Tiers
-
-- **Pro**: $49/month - Individual/small team
-- **Team**: $199/month - Growing teams (5-20 developers)
-- **Enterprise**: Custom pricing - Large organizations
+- GitHub Discussions: https://github.com/dweepbot/dweepbot/discussions
 
 ## Additional Resources
 
